@@ -4,8 +4,8 @@ One of AidData’s flagship data products is the Tracking Underreported Financia
 Chinese Aid to Africa dataset. The data is collected using a method which relies heavily on third-party
 reporting of aid projects from China to African nations. One of the harder problems to solve is whether
 or not these aid projects actually have occurred or are occurring. There are two potential ways to verify
-that the projects have occurred. The first is ground truthing: actually sending someone to verify the
-project occurred. Obviously, this can be expensive! The second is sky truthing: using satellite imagery
+that the projects have occurred. The first is **ground truthing**: actually sending someone to verify the
+project occurred. Obviously, this can be expensive! The second is **sky truthing**: using satellite imagery
 and remote sensing to see if we can pick up the signature of these development projects without putting
 boots on the ground. Say for example, we have found some indication using TUFF that a stadium was
 built in Uganda, we have shown we can skytruth these stadiums using Google Earth. Read more here:
