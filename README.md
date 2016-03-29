@@ -17,6 +17,7 @@ attempting to automate this process.
 ##### THE CHALLENGE:
 
 Given the following items:
+
 1. A set of latitude and longitude pairs which represent some Stadiums in Ghana;
 2. A set of latitude and longitude pairs which represent some Dams in Ghana;
 3. An export of Open Street Map (OSM) data of Ghana in Shapefile, sqlite and PBF formats;
