@@ -27,7 +27,7 @@ Create an application which:
 
 A) Takes each of the data points in (1) above and finds the nearest object in the OSM data. For example if the row is:
 
-6.5.5515, 0.1919, Stadium
+5.5515, 0.1919, Stadium
 
 It would find the nearest Stadium in the OSM file for Ghana for that latitude and longitude. Then..
 
