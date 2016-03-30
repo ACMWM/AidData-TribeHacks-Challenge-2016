@@ -40,9 +40,11 @@ NOTE: We only want the satellite image! Not the screen capture of the Google Map
 C) Your final output should at minimum be a CSV with the original latitude, longitude, object type, as
 well as three new columns: 1) the OSM node id of the nearest matching object, 2) distance in km of the nearest found matching OSM object and 3) the name of the saved image file of the satellite view of the object (please store the files in a single folder)
 
+D) Please issue a pull-request to this repo with your solution (in a seperate folder). Winning entries must contain all code, contain build instructions and generally be nice to work with. Judging criteria are: completeness of solution, code quality, an innovation (feel free to add cool features we havent thought of).
+
 ##### BONUS POINTS
 
-D) Extend your application to arbitrary object mappings. By this we mean, given a source file with one
+E) Extend your application to arbitrary object mappings. By this we mean, given a source file with one
 object type in it, say railroads, ask the user which OSM tags map to that object types.
 
 ##### HINTS:
