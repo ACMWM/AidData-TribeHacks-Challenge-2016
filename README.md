@@ -56,3 +56,5 @@ http://wiki.openstreetmap.org/wiki/Tag:building%3Dstadium
 
 ###### Dam:
 http://wiki.openstreetmap.org/wiki/Tag:waterway%3Ddam
+
+###### Questions? Email Scott Stewart (sstewart@aiddata.org) or Alex Kappel (akappel@aiddata.org).
