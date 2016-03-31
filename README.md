@@ -47,6 +47,9 @@ D) Please issue a pull-request to this repo with your solution (in a seperate fo
 E) Extend your application to arbitrary object mappings. By this we mean, given a source file with one
 object type in it, say railroads, ask the user which OSM tags map to that object types.
 
+F) DOUBLE AWESOME BONUS POINTS: Integrate CesiumJs (https://cesiumjs.org) into your application.
+
+
 ##### HINTS:
 
 1) The stadium and dam object tags the source data maps to a very specific OSM tag.
