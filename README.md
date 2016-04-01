@@ -38,7 +38,7 @@ https://www.google.com/maps/place/Accra+Sports+Stadium/@5.5514127,-0.1927612,454
 NOTE: We only want the satellite image! Not the screen capture of the Google Maps page. You should probably be using the Google Maps API to retrieve your satellite tiles.
 
 C) Your final output should at minimum be a CSV with the original latitude, longitude, object type, as
-well as three new columns: 1) the OSM node id of the nearest matching object, 2) distance in km of the nearest found matching OSM object and 3) the name of the saved image file of the satellite view of the object (please store the files in a single folder)
+well as six new columns: 1) the OSM node id of the nearest matching object, 2) distance in km of the nearest found matching OSM object, 3) the latitude of the closest OSM object of the same type, 4) the longitude of the nearest OSM object of the same type and 5) the name of the saved image file of the satellite view of the object (please store the files in a single folder), and 6) the URL of the satellite image
 
 D) Please issue a pull-request to this repo with your solution (in a seperate folder). Winning entries must contain all code, contain build instructions and generally be nice to work with. Judging criteria are: completeness of solution, code quality, an innovation (feel free to add cool features we havent thought of).
 
