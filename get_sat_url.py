@@ -1,29 +1,67 @@
+import os
 import overpy
+import csv
 
 api = overpy.Overpass()
+# f = open("maps_api_key", 'r')
+# maps_api_key = f.readline()
 
-longitude = -1.6030642544
-latitude  = 6.6762723
-search_width = 0.015
+"""
+Tag descriptors are stored as maps
+"""
+tags = {}
+tags["Stadium"] = ["leisure",  "stadium|pitch|sports_centre"]
+tags["Dam"]     = ["waterway", "dam"]
 
-# base case: look for baba yada kumani stadium
-s = latitude  - search_width
-w = longitude - search_width
-n = latitude  + search_width
-e = longitude + search_width
+base_url = "\t\thttp://maps.google.com/maps?"
 
-query_string = ("way" + \
-        "[\"leisure\"~\"stadium|pitch|sports_centre\"]" + \
-        "(%s,%s,%s,%s);" + \
-        "(._;>;);" + \
-    "out;") % (s, w, n, e)
+def main():
+    with open(input("Enter csv filename:\n")) as csvfile:
+        reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        # Read the header of the csv file if you need it
+        headers = next(reader)
 
-print(query_string)
+        # Go through all the locations in the csv file
+        for location in reader:
+            # Query OSM Overpass API for nearby objects matching the query
+            find_possible_sat_imgs(location)
 
-result = api.query(query_string)
+def find_possible_sat_imgs(location):
+    # Clean the input
+    loc = [location[i].strip() for i in range(len(location))]
 
-for way in result.ways:
-    print("Name: %s" % way.tags.get("name", "n/a"))
-    print("  Nodes:")
-    for node in way.nodes:
-        print("    Lat: %f, Lon: %f" % (node.lat, node.lon))
+    latitude  = float(loc[0])
+    longitude = float(loc[1])
+    [category, regex] = tags[loc[2]]
+
+    # The width of the square we're searching in (units are lat/lng degrees)
+    search_width = 0.015
+
+    print("Look for %ss at (%f, %f):" % (loc[2], latitude, longitude))
+    # base case: look for baba yada kumani stadium
+    s = latitude  - search_width
+    w = longitude - search_width
+    n = latitude  + search_width
+    e = longitude + search_width
+
+    query_string = ("way" + \
+            "[\"%s\"~\"%s\"]" + \
+            "(%s,%s,%s,%s);" + \
+            "(._;>;);" + \
+        "out;") % (category, regex, s, w, n, e)
+
+    result = api.query(query_string)
+
+    for way in result.ways:
+        nodes = way.nodes
+
+        # Find the midpoint of the discovered object
+        lats = sorted([float(node.lat) for node in nodes])
+        lngs = sorted([float(node.lon) for node in nodes])
+        [mid_lat, mid_lng] = [sum(x)/len(x) for x in [lats, lngs]]
+
+        print("\tPossible %s at:" % loc[2])
+        sat_url = base_url + "z=10&t=k&q=loc:%f+%f" % (mid_lat, mid_lng)
+        print(sat_url)
+
+main()
