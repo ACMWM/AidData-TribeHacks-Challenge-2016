@@ -79,15 +79,14 @@ def find_possible_sat_imgs(location, loc_num):
 
     # Get images of ways, if there are any matching
     ways = query_for_ways(category, regex, s, w, n, e)
-    way_img_data = get_imgs_of_ways(ways, obj_type, loc_num)
-
-    generate_html(way_img_data, obj_type, latitude, longitude, loc_num)
+    img_data = get_imgs_of_ways(ways, obj_type, loc_num)
 
     # Get images of nodes, if there are any matching
     if len(ways) == 0:
         nodes = query_for_nodes(category, regex, s, w, n, e)
-        node_img_data = get_imgs_of_nodes(nodes, obj_type, loc_num)
-        generate_html(node_img_data, obj_type, latitude, longitude, loc_num)
+        img_data = get_imgs_of_nodes(nodes, obj_type, loc_num)
+
+    generate_html(img_data, obj_type, latitude, longitude, loc_num)
 
 
 def query_for_ways(category, regex, s, w, n, e):
@@ -96,6 +95,7 @@ def query_for_ways(category, regex, s, w, n, e):
             "(%s,%s,%s,%s);" + \
             "(._;>;);" + \
         "out;") % (category, regex, s, w, n, e)
+    print(query_string)
     return api.query(query_string).ways
 
 
@@ -111,12 +111,13 @@ def get_imgs_of_ways(ways, obj_type, loc_num):
     way_img_data = []
     for way in ways:
         nodes = way.nodes
-
+        coords = [[float(node.lat), float(node.lon)] for node in nodes]
+        [sw, ne] = get_bounding_box(coords)
         # Find the midpoint of the discovered object
         lats = sorted([float(node.lat) for node in nodes])
         lngs = sorted([float(node.lon) for node in nodes])
         [mid_lat, mid_lng] = [sum(x)/len(x) for x in [lats, lngs]]
-        way_img = get_img(mid_lat, mid_lng, 10, obj_type, loc_num)
+        way_img = get_img_box(sw, ne, obj_type, loc_num)
         way_img_data.append(way_img)
     return way_img_data
 
@@ -128,6 +129,28 @@ def get_imgs_of_nodes(nodes, obj_type, loc_num):
         node_img = get_img(lat, lng, 10, obj_type, loc_num)
         node_img_data.append(node_img)
     return node_img_data
+
+
+def get_img_box(sw, ne, obj_type, loc_num):
+    print("  Possible %s at:" % obj_type)
+    mid_lat = (sw[0] + ne[0])/2
+    mid_lng = (sw[1] + ne[1])/2
+    sat_url = base_url + "z=10&t=k&q=loc:%f+%f" % (mid_lat, mid_lng)
+    print(sat_url)
+
+    img_folder = create_dir_if_necessary(obj_type)
+
+    coord_string = ("%.4fx%.4f" % (mid_lat, mid_lng)).replace('.', ',')
+    img_path = img_folder + "%s%d_%s.png" % (obj_type, loc_num, coord_string)
+    print("    Downloading image of this %s to %s." % (obj_type, img_path))
+
+    img_url = "https://maps.googleapis.com/maps/api/staticmap?" + \
+        "maptype=satellite&size=1280x1024&visible=%f,%f&visible=%f,%f" % (sw[0], sw[1], ne[0], ne[1])
+    print(img_url)
+    urllib.request.urlretrieve(img_url, img_path)
+
+    return { "path": img_path, "link": sat_url, "lat": mid_lat,
+        "lng": mid_lng }
 
 
 def get_img(lat, lng, zoom, obj_type, loc_num):
@@ -142,11 +165,29 @@ def get_img(lat, lng, zoom, obj_type, loc_num):
     print("    Downloading image of this %s to %s." % (obj_type, img_path))
 
     img_url = base_img_url + ("%f,%f" % (lat, lng))
+    print(img_url)
     urllib.request.urlretrieve(img_url, img_path)
 
     return { "path": img_path, "link": sat_url, "lat": lat,
         "lng": lng }
 
+
+def get_bounding_box(points):
+    n = points[0][0]
+    s = points[0][0]
+    w = points[0][1]
+    e = points[0][1]
+    for p in points:
+        if p[0] > n:
+            n = p[0]
+        if p[0] < s:
+            s = p[0]
+        if p[1] > e:
+            e = p[1]
+        if p[1] < w:
+            w = p[1]
+
+    return [[s,w], [n, e]]
 
 def create_dir_if_necessary(obj_type):
     directory  = obj_type + "_images"
