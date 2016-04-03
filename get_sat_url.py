@@ -4,6 +4,8 @@ import csv
 import tkinter.filedialog
 import urllib
 
+from yattag import Doc
+
 api = overpy.Overpass()
 MAPS_API_KEY = None
 
@@ -39,8 +41,6 @@ base_img_url = "https://maps.googleapis.com/maps/api/staticmap?" + \
 
 # Get the CSV file we want to use
 csv_filepath = tkinter.filedialog.askopenfilename(initialdir=os.getcwd())
-
-
 
 def main():
     with open(csv_filepath) as csvfile:
@@ -79,12 +79,16 @@ def find_possible_sat_imgs(location, loc_num):
 
     # Get images of ways, if there are any matching
     ways = query_for_ways(category, regex, s, w, n, e)
-    get_imgs_of_ways(ways, obj_type, loc_num)
+    way_img_data = get_imgs_of_ways(ways, obj_type, loc_num)
+
+    generate_html(way_img_data, obj_type, latitude, longitude, loc_num)
 
     # Get images of nodes, if there are any matching
     if len(ways) == 0:
         nodes = query_for_nodes(category, regex, s, w, n, e)
-        get_imgs_of_nodes(nodes, obj_type, loc_num)
+        node_img_data = get_imgs_of_nodes(nodes, obj_type, loc_num)
+        generate_html(node_img_data, obj_type, latitude, longitude, loc_num)
+
 
 def query_for_ways(category, regex, s, w, n, e):
     query_string = ("way" + \
@@ -104,6 +108,7 @@ def query_for_nodes(category, regex, s, w, n, e):
 
 
 def get_imgs_of_ways(ways, obj_type, loc_num):
+    way_img_data = []
     for way in ways:
         nodes = way.nodes
 
@@ -111,12 +116,19 @@ def get_imgs_of_ways(ways, obj_type, loc_num):
         lats = sorted([float(node.lat) for node in nodes])
         lngs = sorted([float(node.lon) for node in nodes])
         [mid_lat, mid_lng] = [sum(x)/len(x) for x in [lats, lngs]]
-        get_img(mid_lat, mid_lng, 10, obj_type, loc_num)
+        way_img = get_img(mid_lat, mid_lng, 10, obj_type, loc_num)
+        way_img_data.append(way_img)
+    return way_img_data
+
 
 def get_imgs_of_nodes(nodes, obj_type, loc_num):
+    node_img_data = []
     for node in nodes:
         [lat, lng] = [node.lat, node.lon]
-        get_img(lat, lng, 10, obj_type, loc_num)
+        node_img = get_img(lat, lng, 10, obj_type, loc_num)
+        node_img_data.append(node_img)
+    return node_img_data
+
 
 def get_img(lat, lng, zoom, obj_type, loc_num):
     print("  Possible %s at:" % obj_type)
@@ -130,13 +142,36 @@ def get_img(lat, lng, zoom, obj_type, loc_num):
     print("    Downloading image of this %s to %s." % (obj_type, img_path))
 
     img_url = base_img_url + ("%f,%f" % (lat, lng))
-
     urllib.request.urlretrieve(img_url, img_path)
+
+    return { "path": img_path, "link": sat_url, "lat": lat,
+        "lng": lng }
+
 
 def create_dir_if_necessary(obj_type):
     directory  = obj_type + "_images"
     if not os.path.exists(directory):
         os.makedirs(directory)
     return directory + "/"
+
+
+def generate_html(img_data, obj_type, lat, lng, loc_num):
+    doc, tag, text = Doc().tagtext()
+
+    with tag("html"):
+        with tag("body"):
+            with tag('h2'):
+                text("%ss near (%f, %f)" % (obj_type, lat, lng))
+            for img in img_data:
+                with tag("a", href=img["link"], id="sat-img-container"):
+                    doc.stag("img", src=img["path"])
+                with tag("p"):
+                    text("%s at (%f, %f)" % (obj_type, img["lat"], img["lng"]))
+
+    html_to_write = doc.getvalue()
+
+    with open("%s%d.html" % (obj_type, loc_num), "w") as f:
+        f.write(html_to_write)
+
 
 main()
