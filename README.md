@@ -1,3 +1,18 @@
+###Installation
+
+  1. Install Python3
+  2. Get the program by either downloading the zip file or git clone https://github.com/stuharvey/AidData-TribeHacks-Challenge-2016.git
+  3. Acquire google maps api key at "https://developers.google.com/maps/web/"
+  4. Save the api key in the project directory with name "maps_api_key"
+  5. Run "pip install -r requirements.txt" to install the necessary python modules
+  6. Run the program with "python get_sat_url.py"
+  7. Select the csv with data format "lat,long,tag" as input file
+
+### Additional Tags
+  
+  For further extention of this program, there is a file named "tags.csv" in the directory 
+  which maps IATI code to OSM tags to search for other project types such as schools.
+  
 ### The AidData “Skytruthiness” Challenge
 
 One of AidData’s flagship data products is the Tracking Underreported Financial Flows (TUFF)
