@@ -95,7 +95,7 @@ def query_for_ways(category, regex, s, w, n, e):
             "(%s,%s,%s,%s);" + \
             "(._;>;);" + \
         "out;") % (category, regex, s, w, n, e)
-    print(query_string)
+    # print(query_string)
     return api.query(query_string).ways
 
 
@@ -136,7 +136,7 @@ def get_img_box(sw, ne, obj_type, loc_num):
     mid_lat = (sw[0] + ne[0])/2
     mid_lng = (sw[1] + ne[1])/2
     sat_url = base_url + "z=10&t=k&q=loc:%f+%f" % (mid_lat, mid_lng)
-    print(sat_url)
+    # print(sat_url)
 
     img_folder = create_dir_if_necessary(obj_type)
 
@@ -146,7 +146,7 @@ def get_img_box(sw, ne, obj_type, loc_num):
 
     img_url = "https://maps.googleapis.com/maps/api/staticmap?" + \
         "maptype=satellite&size=1280x1024&visible=%f,%f&visible=%f,%f" % (sw[0], sw[1], ne[0], ne[1])
-    print(img_url)
+    # print(img_url)
     urllib.request.urlretrieve(img_url, img_path)
 
     return { "path": img_path, "link": sat_url, "lat": mid_lat,
