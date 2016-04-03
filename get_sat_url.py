@@ -123,13 +123,20 @@ def get_img(lat, lng, zoom, obj_type, loc_num):
     sat_url = base_url + "z=10&t=k&q=loc:%f+%f" % (lat, lng)
     print(sat_url)
 
+    img_folder = create_dir_if_necessary(obj_type)
+
     coord_string = ("%.4fx%.4f" % (lat, lng)).replace('.', ',')
-    img_path = "%s%d_%s.png" % (obj_type, loc_num, coord_string)
+    img_path = img_folder + "%s%d_%s.png" % (obj_type, loc_num, coord_string)
     print("    Downloading image of this %s to %s." % (obj_type, img_path))
 
     img_url = base_img_url + ("%f,%f" % (lat, lng))
 
     urllib.request.urlretrieve(img_url, img_path)
 
+def create_dir_if_necessary(obj_type):
+    directory  = obj_type + "_images"
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    return directory + "/"
 
 main()
