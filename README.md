@@ -2,7 +2,7 @@
 
   1. Install Python3
   2. Get the program by either downloading the zip file or git clone https://github.com/stuharvey/AidData-TribeHacks-Challenge-2016.git
-  3. Acquire google maps api key at "https://developers.google.com/maps/web/"
+  3. Acquire google maps api key at "https://developers.google.com/maps/documentation/static-maps/"
   4. Save the api key in the project directory with name "maps_api_key"
   5. Run "pip install -r requirements.txt" to install the necessary python modules
   6. Run the program with "python get_sat_url.py"
